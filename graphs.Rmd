@@ -97,7 +97,7 @@ ggplot(new_eoc, aes(x = chapter_number, y = mean_score)) +
 
 
 ```{r}
-ggplot(responses.final, aes(x = chapter_number, y = prop_code)) +
+ggplot(resp.final, aes(x = chapter_number, y = prop_code)) +
   geom_point(shape = 21, fill = "lightblue", color = "black", size = 4, alpha = 0.8) +
   geom_smooth(method = "loess", se = FALSE, color = "gray", size = 1.2) +
   labs(x = 'Chapter Number', y = 'Proportion of Code Questions') +
@@ -112,3 +112,46 @@ ggplot(responses.final, aes(x = chapter_number, y = prop_code)) +
 ```
 
 # eoc score and prop of code
+```{r}
+combined <- merge(resp.final,new_eoc)
+ggplot(combined, aes(x = prop_code, y = mean_score)) +
+  geom_point(shape = 21, fill = "purple", color = "black", size = 4, alpha = 0.8) +
+  geom_smooth(method = "loess", se = FALSE, color = "gray", size = 1.2) +
+  labs(x = 'Proportion of Coding Questions', y = 'Mean Exam Score') +
+  theme_minimal() +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_blank(),
+    axis.line = element_line(colour = "black"),
+    text = element_text(family = "Arial", color = "black", size = 12)
+  )
+
+cor(combined$prop_code,combined$mean_score)
+```
+
+
+# eoc score to learnocity
+```{r}
+combined$prop_learnocity <- (1- combined$prop_code)
+ggplot(combined, aes(x = prop_learnocity, y = mean_score)) +
+  geom_point(shape = 21, fill = "purple", color = "black", size = 4, alpha = 0.8) +
+  geom_smooth(method = "loess", se = FALSE, color = "gray", size = 1.2) +
+  labs(x = 'Proportion of Learnocity Questions', y = 'Mean Exam Score') +
+  theme_minimal() +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_blank(),
+    axis.line = element_line(colour = "black"),
+    text = element_text(family = "Arial", color = "black", size = 12)
+  )
+
+cor(combined$prop_code,combined$mean_score)
+```
+
+
+
+
+
+
