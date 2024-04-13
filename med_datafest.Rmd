@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 page_views <- read.csv("page_views.csv")
-
+page_views <- page_views[page_views$book=='College / Statistics and Data Science (ABC)',]
 
 # no correlation between chapter numbers and how many times they revisited a page
 plot(page_views$chapter_number, page_views$tried_again_clicks)
@@ -26,27 +26,88 @@ Does having end of chapter review questions impact how students engage with a pa
 review_true <- drop_na(page_views[page_views$review_flag==TRUE,])
 review_false <- drop_na(page_views[page_views$review_flag==FALSE,])
 
-sum(review_true$engaged)
-sum(review_false$engaged)
+summary(review_true$engaged)
+summary(review_false$engaged)
 ```
-from the data we see that having review questions reduces the engagement time. is this because students don't have to go back and review again after a chapter since the review is giving them a summary of everything they learned?
+from the data we see that having review questions increases the engagement time. 
+```{r}
+summary(review_true$idle_brief)
+summary(review_false$idle_brief)
+print ("***********")
+summary(review_true$idle_long)
+summary(review_false$idle_long)
+
+# from this we see that chapters with a review have higher brief and long idle times
+```
 
 
+```{r}
+summary(review_true$tried_again_clicks)
+summary(review_false$tried_again_clicks)
+```
 
 does having end of chapter review questions result in higher exam scores?
 ```{r}
-tail(page_views)
+```
+
+
+look at try again clicks when separating by chapter
+do a for loop
+
+```{r}
+means <-c()
+for (i in 1:13){
+  chapter <- drop_na(page_views[page_views$chapter_number==i,])
+  means <- c(means, mean(chapter$engaged))
+  print (paste("These are summaries for chapter",i))
+  print ("Tried again")
+  print (summary(chapter$tried_again_clicks))
+  print ("Engaged")
+  print (summary(chapter$engaged))
+  print ("Was complete")
+  print (summary(chapter$was_complete))
+  print ("")
+}
+means
+```
+7, 1,2,5,9
+
+```{r}
+eoc <- read.csv("checkpoints_eoc.csv")
+#eoc <- eoc[eoc$book=='College / Statistics and Data Science (ABC)',]
+#eoc
+```
+
+# group by chapter
+# then find the means of all the scores
+
+```{r}
+new_eoc <- eoc %>%
+  filter(book == 'College / Statistics and Data Science (ABC)') %>%
+  mutate(score=(n_correct/n_possible))%>%
+  group_by(chapter_number)%>%
+  summarize(mean_score = mean(score,na.rm=TRUE))
 ```
 
 
 
+```{r}
+media <- read.csv('media_views.csv')
+media <- drop_na(media)
+#media <- media[media$book=='College / Statistics and Data Science (ABC)',]
+```
 
-
-
-
-
-
-
+```{r}
+library(dplyr)
+library(tidyr)
+media <- read.csv('media_views.csv')
+#media <- drop_na(media)
+new_media <- media %>%
+  filter(book == "College / Statistics and Data Science (ABC)") %>%
+  group_by(chapter_number) %>%
+  summarize(mean_prop = mean(proportion_video,na.rm=TRUE))
+new_media
+```
 
 
 
