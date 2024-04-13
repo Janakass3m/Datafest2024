@@ -1,0 +1,65 @@
+---
+title: "smu_datafest"
+output: html_document
+date: "2024-04-13"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+page_views <- read.csv("page_views.csv")
+
+
+# no correlation between chapter numbers and how many times they revisited a page
+plot(page_views$chapter_number, page_views$tried_again_clicks)
+```
+
+
+Does having end of chapter review questions impact how students engage with a page? (review_flag)
+
+```{r}
+#barplot(table(page_views$review_flag))
+
+review_true <- drop_na(page_views[page_views$review_flag==TRUE,])
+review_false <- drop_na(page_views[page_views$review_flag==FALSE,])
+
+sum(review_true$engaged)
+sum(review_false$engaged)
+```
+from the data we see that having review questions reduces the engagement time. is this because students don't have to go back and review again after a chapter since the review is giving them a summary of everything they learned?
+
+
+
+does having end of chapter review questions result in higher exam scores?
+```{r}
+tail(page_views)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
