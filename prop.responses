@@ -1,0 +1,13 @@
+responses <- read.csv("responses.csv")
+
+responses.final <- responses %>%
+  filter(book == "College / Statistics and Data Science (ABC)", chapter_number <= 12, student_id == "fb7c9a8b-7b0c-4907-90c1-3a6e5230b486") %>%
+  group_by(chapter_number) %>%
+  select(item_id, item_type) %>%
+  distinct()%>%
+  mutate(total_questions = n_distinct(item_id),  # Total number of unique questions in the chapter
+         code_count = sum(item_type == "code"))%>%
+  mutate(prop_code = code_count / total_questions)%>%
+  select(chapter_number, total_questions, code_count, prop_code)
+
+resp.final <- unique(responses.final)
