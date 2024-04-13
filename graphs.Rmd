@@ -1,0 +1,42 @@
+---
+title: "graphs_datafest"
+output: html_document
+date: "2024-04-13"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+```
+
+```{r}
+# loading all datasets
+page_views <- read.csv("page_views.csv")
+new_page_views <- page_views[page_views$book=='College / Statistics and Data Science (ABC)',]
+
+eoc <- read.csv("checkpoints_eoc.csv")
+new_eoc <- eoc %>%
+  filter(book == 'College / Statistics and Data Science (ABC)') %>%
+  mutate(score=(n_correct/n_possible))%>%
+  group_by(chapter_number)%>%
+  summarize(mean_score = mean(score,na.rm=TRUE))
+
+media <- read.csv('media_views.csv')
+new_media <- media %>%
+  filter(book == "College / Statistics and Data Science (ABC)") %>%
+  group_by(chapter_number) %>%
+  summarize(mean_prop = mean(proportion_video,na.rm=TRUE))
+
+responses <- read.csv('responses.csv')
+```
+
+
+
+
+
+
