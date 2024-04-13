@@ -35,7 +35,20 @@ new_media <- media %>%
   group_by(chapter_number) %>%
   summarize(mean_prop = mean(proportion_video,na.rm=TRUE))
 
-responses <- read.csv('responses.csv')
+responses <- read.csv("responses.csv")
+# finding # of unique questions in chapter and then finding the amount of code questions in that chapter
+# from that, finding proportion of code questions and comparing that to learnosity questions
+responses.final <- responses %>%
+  filter(book == "College / Statistics and Data Science (ABC)", chapter_number <= 12, student_id == "fb7c9a8b-7b0c-4907-90c1-3a6e5230b486") %>%
+  group_by(chapter_number) %>%
+  select(item_id, item_type) %>%
+  distinct()%>%
+  mutate(total_questions = n_distinct(item_id),  # Total number of unique questions in the chapter
+         code_count = sum(item_type == "code"))%>%
+  mutate(prop_code = code_count / total_questions)%>%
+  select(chapter_number, total_questions, code_count, prop_code)
+
+resp.final <- unique(responses.final)
 ```
 
 
@@ -63,6 +76,11 @@ ggplot(new_page_views, aes(x = chapter_number, y = mean_engagement)) +
     text = element_text(family = "Arial", color = "black", size = 12)
   )
 
+
+```
+
+# best and worst performances based on chapters
+```{r}
 ggplot(new_eoc, aes(x = chapter_number, y = mean_score)) +
   geom_point(shape = 21, fill = "lightpink", color = "black", size = 4, alpha = 0.8) +
   geom_smooth(method = "loess", se = FALSE, color = "lightgreen", size = 1.2) +
@@ -75,14 +93,22 @@ ggplot(new_eoc, aes(x = chapter_number, y = mean_score)) +
     axis.line = element_line(colour = "black"),
     text = element_text(family = "Arial", color = "black", size = 12)
   )
-
-
 ```
 
-# best and worst performances based on chapters
+
 ```{r}
-
+ggplot(responses.final, aes(x = chapter_number, y = prop_code)) +
+  geom_point(shape = 21, fill = "lightblue", color = "black", size = 4, alpha = 0.8) +
+  geom_smooth(method = "loess", se = FALSE, color = "gray", size = 1.2) +
+  labs(x = 'Chapter Number', y = 'Proportion of Code Questions') +
+  theme_minimal() +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_blank(),
+    axis.line = element_line(colour = "black"),
+    text = element_text(family = "Arial", color = "black", size = 12)
+  )
 ```
 
-
-
+# eoc score and prop of code
