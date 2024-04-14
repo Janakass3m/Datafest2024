@@ -1,0 +1,7 @@
+items <- read.csv("items.csv")
+eoc <- read.csv("checkpoints_eoc.csv")
+
+merged <- merge(items, eoc, by = c('class_id', 'chapter_number'), all = FALSE)
+
+merged <- merged%>%
+  select(class_id, item_type, lrn_type, EOC)
