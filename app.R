@@ -1,9 +1,6 @@
 library(shiny)
-library(shinyjs)
 
 ui <- fluidPage(
-  useShinyjs(),  # Initialize shinyjs
-  
   tags$head(
     tags$style(HTML("
       @import url('https://fonts.googleapis.com/css2?family=League+Spartan&display=swap');
@@ -29,6 +26,14 @@ ui <- fluidPage(
         max-height: 750px;
       }
 
+      .custom-image {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 100px;
+        height: auto;
+      }
+
       .white-box {
         position: absolute;
         top: 50%;
@@ -43,26 +48,30 @@ ui <- fluidPage(
         box-sizing: border-box; /* Include padding in the box size */
         border: 2px solid black; /* Border */
       }
-      .logo-container {
-        position: absolute;
-        top: 40px; /* Adjust this value to move the logo down */
-        left: 40px; /* Adjust this value to move the logo right */
-      }
-
-      .logo-img {
-        width: 50px; /* Adjust the width of your logo */
-        height: auto; /* Maintain aspect ratio */
-      }
       
+            
+      .white-band {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 60px; /* Adjust the height of the white band */
+        background-color: white;
+        z-index: 1000; /* Ensure the white band is above other content */
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Add shadow for subtle separation */
+      }
     "))
   ),
+  div(class = "white-band"),
   div(class = "container-fluid",
       div(id = "page1", style = "display:block;",
-          tags$video(src = "videos\\Purple animated tech festival promo instagram post.mp4", type = "video/mp4", controls = TRUE),
+          tags$img(src = "images/image.png", class = "custom-image"),
+          tags$video(src = "videos/Purple animated tech festival promo instagram post.mp4", type = "video/mp4", controls = TRUE),
           br(),
           actionButton("next_page", "Next Page", style = "margin-top: 20px;")
       ),
       div(id = "page2", style = "display:none;",
+          tags$img(src = "images/image.png", class = "custom-image"),
           div(class = "white-box",
               h2("Introduction"),
               p("There is a very interesting psychological background to learning content. Different skills and methods have been scientifically proven to be more beneficial to students when they are learning. In order to increase engagement and enhance the impact of the learning experience, cognitive psychologists Jim Stigler and Ji Son created an online textbook named CourseKata in order to improve statistics learning by examining students’ interactions with online textbooks. This virtual textbook offers the opportunity to look into the actions and choices of thousands of students as they learn statistics. After conducting a thorough analysis, we have come up with a number of suggestions for the CourseKata team surrounding some patterns of engagement and missing features."),
@@ -70,26 +79,32 @@ ui <- fluidPage(
               actionButton("back_page2", "Back", style = "margin-top: 40px;")
           )
       ),
-      div(id = "page3", style = "display:none;",
+      div(id = "graphs_page", style = "display:none;",
+          tags$img(src = "images/image.png", class = "custom-image"),
           div(class = "white-box",
-              h2("Analysis"),
+              h2("Graphs"),
+              p("Content of the Graphs page."),
+              actionButton("next_graphs_page", "Next Page", style = "margin-top: 20px;"),
+              actionButton("back_graphs_page", "Back", style = "margin-top: 20px;")
+          )
+      ),
+      div(id = "page3", style = "display:none;",
+          tags$img(src = "images/image.png", class = "custom-image"),
+          div(class = "white-box",
+              h2("Sample Questions"),
               p(""),
               actionButton("next_page3", "Next Page", style = "margin-top: 20px;"),
               actionButton("back_page1", "Back", style = "margin-top: 20px;")
           )
       ),
       div(id = "page4", style = "display:none;",
+          tags$img(src = "images/image.png", class = "custom-image"),
           div(class = "white-box",
               h2("Conclusion"),
-              p("From our analysis, we have concluded that a more diverse and variable type of questions in an interactive textbook would engage students more. As seen previously, students generally performed worse when they had a large number of the same number of questions (ex. MCQ) compared to when they had multiple different types of questions. These types of questions would hone in the student’s attention and help them practice different skills when it comes to understanding the content. Chapters in this interactive textbook such as 12, 10, and 7 were also seen to have the worst performance in the book. 
-
-"),
-              actionButton("back_page3", "Back", style = "margin-top: 40px;")
+              p(""),
+              actionButton("back_page3", "Back", style = "margin-top: 20px;")
           )
       )
-  ),
-  div(class = "logo-container",
-      img(src = "~/Desktop/datafest24/shinyApp/THE SDS Bois.png", class = "logo-img")
   ),
   tags$script("
     $(document).ready(function() {
@@ -104,11 +119,20 @@ ui <- fluidPage(
 
       $('#next_page2').click(function() {
         $('#page2').hide();
+        $('#graphs_page').show();
+      });
+      $('#back_graphs_page').click(function() {
+        $('#graphs_page').hide();
+        $('#page2').show();
+      });
+
+      $('#next_graphs_page').click(function() {
+        $('#graphs_page').hide();
         $('#page3').show();
       });
       $('#back_page1').click(function() {
         $('#page3').hide();
-        $('#page2').show();
+        $('#graphs_page').show();
       });
 
       $('#next_page3').click(function() {
