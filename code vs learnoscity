@@ -1,0 +1,11 @@
+combined <- combined %>%
+  mutate(prop_learn = 1 - prop_code)
+
+# Plot the data
+ggplot(combined, aes(x = factor(chapter_number))) +
+  geom_bar(aes(y = code_count/ total_questions, fill = "Code"), position = "dodge", stat = "identity") +
+  geom_bar(aes(y = 1 - (code_count/total_questions), fill = "Learnosity"), position = "dodge", stat = "identity") +
+  labs(x = "Chapter", y = "Frequency", title = "Frequency of Code vs. Learnosity Questions by Chapter") +
+  scale_fill_manual(values = c("Code" = "blue", "Learnosity" = "red")) +
+  theme_minimal() +
+  theme(legend.title = element_blank())
