@@ -81,8 +81,10 @@ ui <- fluidPage(
       div(id = "page4", style = "display:none;",
           div(class = "white-box",
               h2("Conclusion"),
-              p(""),
-              actionButton("back_page3", "Back", style = "margin-top: 20px;")
+              p("From our analysis, we have concluded that a more diverse and variable type of questions in an interactive textbook would engage students more. As seen previously, students generally performed worse when they had a large number of the same number of questions (ex. MCQ) compared to when they had multiple different types of questions. These types of questions would hone in the student’s attention and help them practice different skills when it comes to understanding the content. Chapters in this interactive textbook such as 12, 10, and 7 were also seen to have the worst performance in the book. 
+
+"),
+              actionButton("back_page3", "Back", style = "margin-top: 40px;")
           )
       )
   ),
