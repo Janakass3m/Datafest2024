@@ -116,32 +116,41 @@ ui <- fluidPage(
           tags$img(src = "images/image.png", class = "custom-image"),
           div(class = "white-box",
               h2("Sample Questions"),
-              p(""),
-              actionButton("next_page4", "Next Page", style = "margin-top: 20px;"),
-              actionButton("back_graphs_page", "Back", style = "margin-top: 20px;")
+              p("Multiple Choice Question: Where are we right now?"),
+              radioButtons("location", label = NULL, choices = c("SMU", "Austin", "Houston", "New York"), inline = TRUE),
+              hr(),
+              h3("Choice Matrix Question:"),
+              fluidRow(
+                column(6, 
+                       tags$div(id = "row_13.5", style = "margin-bottom: 10px;",
+                                h4("13.5"),
+                                actionButton("13.5_value", label = "Value", style = "margin-right: 10px;"),
+                                actionButton("13.5_variable", label = "Variable", style = "margin-right: 10px;"),
+                                actionButton("13.5_neither", label = "Neither", style = "margin-right: 10px;")
+                       )
+                ),
+                column(6, 
+                       tags$div(id = "row_Texas", style = "margin-bottom: 10px;",
+                                h4("Texas"),
+                                actionButton("Texas_value", label = "Value", style = "margin-right: 10px;"),
+                                actionButton("Texas_variable", label = "Variable", style = "margin-right: 10px;"),
+                                actionButton("Texas_neither", label = "Neither", style = "margin-right: 10px;")
+                       )
+                )
+              ),
+              hr(),
+              h3("Short Answer Question:"),
+              p("What is the capital of Texas?"),
+              textInput("capital", label = NULL, placeholder = "Your answer..."),
+              actionButton("check_capital", "Check Answer", style = "margin-top: 20px;"),
+              p(id = "capital_feedback", "")
           )
       ),
       div(id = "page4", style = "display:none;",
           tags$img(src = "images/image.png", class = "custom-image"),
           div(class = "white-box",
               h2("Conclusion"),
-              p("From our analysis, we have concluded that a more diverse and variable type of questions in an interactive textbook would engage students more. As seen previously, students generally performed worse when they had a large number of the same number of questions (ex. MCQ) compared to when they had multiple different types of questions. These types of questions would hone in the student’s attention and help them practice different skills when it comes to understanding the content. Chapters in this interactive textbook such as 12, 10, and 7 were also seen to have the worst performance in the book. 
-"),
               actionButton("back_page3", "Back", style = "margin-top: 20px;")
-          )
-      ),
-      div(id = "page3_matrix", style = "display:none;",
-          tags$img(src = "images/image.png", class = "custom-image"),
-          div(class = "white-box",
-              h2("Sample Questions"),
-              matrixInput("choice_matrix", 
-                          value = matrix(c("Value", "Variable", "Neither", "Value", "Variable", "Neither"), nrow = 2, byrow = TRUE),
-                          rows = list(extend = TRUE, names = c("13.5", "Texas")),
-                          cols = list(extend = TRUE, names = c("Option 1", "Option 2", "Option 3")),
-                          class = "matrix-input"
-              ),
-              actionButton("next_page4", "Next Page", style = "margin-top: 20px;"),
-              actionButton("back_graphs_page", "Back", style = "margin-top: 20px;")
           )
       )
   ),
@@ -187,18 +196,10 @@ ui <- fluidPage(
         $('#page3').hide();
         $('#page4').show();
       });
+
       $('#back_page4').click(function() {
         $('#page4').hide();
         $('#page3').show();
-      });
-
-      $('#check_answer').click(function() {
-        var selectedOption = $('input[name=location]:checked').val();
-        if (selectedOption === 'SMU') {
-          $('#answer_feedback').text('Correct');
-        } else {
-          $('#answer_feedback').text('Incorrect');
-        }
       });
 
       $('#check_capital').click(function() {
@@ -210,20 +211,22 @@ ui <- fluidPage(
         }
       });
 
-      $('#choice_matrix input').click(function() {
-        var row = $(this).closest('tr').find('td:first').text();
-        var col = $(this).closest('td').prevAll().length + 1;
-        var value = $(this).val();
+      $('#13.5_value').click(function() {
+        $('#row_13\\.5 .btn').removeClass('btn-success btn-danger').addClass('btn-default');
+        $(this).removeClass('btn-default').addClass('btn-success');
+      });
+      $('#13.5_variable, #13.5_neither').click(function() {
+        $('#row_13\\.5 .btn').removeClass('btn-success btn-danger').addClass('btn-default');
+        $(this).removeClass('btn-default').addClass('btn-danger');
+      });
 
-        // Reset all buttons to default
-        $(this).closest('table').find('input[type=button]').removeClass('btn-success btn-danger').addClass('btn-default');
-
-        // Apply green or red color based on the selection
-        if ((row === '13.5' && value === 'Value') || (row === 'Texas' && value === 'Variable')) {
-          $(this).removeClass('btn-default').addClass('btn-success');
-        } else {
-          $(this).removeClass('btn-default').addClass('btn-danger');
-        }
+      $('#Texas_variable').click(function() {
+        $('#row_Texas .btn').removeClass('btn-success btn-danger').addClass('btn-default');
+        $(this).removeClass('btn-default').addClass('btn-success');
+      });
+      $('#Texas_value, #Texas_neither').click(function() {
+        $('#row_Texas .btn').removeClass('btn-success btn-danger').addClass('btn-default');
+        $(this).removeClass('btn-default').addClass('btn-danger');
       });
     });
   ")
