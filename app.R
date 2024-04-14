@@ -16,31 +16,31 @@ ui <- fluidPage(
   ),
   fluidRow(
     column(width = 8,
-      tabsetPanel(
-        id = "mainTabset",
-        tabPanel("Table of Contents",
-                 h2("Table of Contents"),
-                 p("Introduction"),
-                 actionButton("btn1", "Click to access the Introduction",style = "background-color: #B8E2F2;"),
-                 p("Analysis"),
-                 actionButton("btn2", "Click to access the Analysis",style = "background-color:#ede2f0;"),
-                 p("Conclusion"),
-                 actionButton("btn3", "Click to access the Conclusion",style = "background-color: #ffffff;")),
-        tabPanel("Introduction",
-                 h2("Introduction"),
-                 p("Introduction"),
-                 ),
-        tabPanel("Analysis",
-                 h2("Analysis"),
-                 p("Analysis"),
-        ),
-        tabPanel("Conclusion",
-                 h2("Conclusion"),
-                 p("Conclusion"),
-        )
-      )
-))
-  )
+           tabsetPanel(
+             id = "mainTabset",
+             tabPanel("Table of Contents",
+                      h2("Table of Contents"),
+                      p("Introduction"),
+                      actionButton("btn1", "Click to access the Introduction",style = "background-color: #B8E2F2;"),
+                      p("Analysis"),
+                      actionButton("btn2", "Click to access the Analysis",style = "background-color:#B8E2F2;"),
+                      p("Conclusion"),
+                      actionButton("btn3", "Click to access the Conclusion",style = "background-color: #B8E2F2;")),
+             tabPanel("Introduction",
+                      h2("Introduction"),
+                      p("Introduction"),
+             ),
+             tabPanel("Analysis",
+                      h2("Analysis"),
+                      p("Analysis"),
+             ),
+             tabPanel("Conclusion",
+                      h2("Conclusion"),
+                      p("Conclusion"),
+             )
+           )
+    ))
+)
 
 
 server <- function(input, output, session) {
@@ -48,11 +48,15 @@ server <- function(input, output, session) {
     # Switch to Tab 2 when the button is clicked
     updateTabsetPanel(session, inputId = "mainTabset", selected = "Introduction")
   })
-  observeEvent(input$btn1, {
+  observeEvent(input$btn2, {
     # Switch to Tab 2 when the button is clicked
-    updateTabsetPanel(session, inputId = "mainTabset", selected = "Introduction")
+    updateTabsetPanel(session, inputId = "mainTabset", selected = "Analysis")
   })
-
+  observeEvent(input$btn3, {
+    # Switch to Tab 2 when the button is clicked
+    updateTabsetPanel(session, inputId = "mainTabset", selected = "Conclusion")
+  })
+  
 }
 
 shinyApp(ui, server)
