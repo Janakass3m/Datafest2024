@@ -7,19 +7,21 @@ ui <- fluidPage(
       body {
           font-family: 'League Spartan', sans-serif; 
           font-size: 26px; 
-          margin: 0; 
-          padding: 0;
-          height: 100vh;
+          margin: 0;
+          padding: 0; 
+          height: 100vh; 
           background: linear-gradient(to bottom, #B8E2F2, #ede2f0, #ffffff); 
       }
     ")),
     tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js"),
     tags$script(HTML('
       $(document).ready(function() {
-        $("#mainTabset").turn({
-          width: 800,
-          height: 400,
-          autoCenter: true
+        $("#mainTabset").on("shown.bs.tab", function() {
+          $(".tab-pane.active .book").turn({
+            width: 800,
+            height: 400,
+            autoCenter: true
+          });
         });
       });
     '))
@@ -35,19 +37,7 @@ ui <- fluidPage(
                       p("Analysis"),
                       actionButton("btn2", "Click to access the Analysis",style = "background-color:#ede2f0;"),
                       p("Conclusion"),
-                      actionButton("btn3", "Click to access the Conclusion",style = "background-color: #ffffff;")),
-             tabPanel("Introduction",
-                      h2("Introduction"),
-                      p("Introduction"),
-             ),
-             tabPanel("Analysis",
-                      h2("Analysis"),
-                      p("Analysis"),
-             ),
-             tabPanel("Conclusion",
-                      h2("Conclusion"),
-                      p("Conclusion"),
-             )
+                      actionButton("btn3", "Click to access the Conclusion",style = "background-color: #ffffff;"))
            )
     )
   )
@@ -55,7 +45,6 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
   observeEvent(input$btn1, {
-    # Switch to Tab 2 when the button is clicked
     updateTabsetPanel(session, inputId = "mainTabset", selected = "Introduction")
   })
 }
