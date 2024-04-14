@@ -2,39 +2,23 @@ library(shiny)
 
 ui <- fluidPage(
   tags$head(
-    tags$style(
-      HTML("
-        /* Custom CSS to increase paragraph font size */
-        p {
-          font-size: 18px; 
-        }
-        
-        /* CSS for page-turning animation */
-        .tabset > .tab-content {
-          position: relative;
-          overflow: hidden;
-        }
-        .tabset > .tab-content > .tab-pane {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          transition: transform 0.5s ease-in-out;
-        }
-        .tabset > .tab-content > .tab-pane.active {
-          transform: translateX(0%);
-        }
-        .tabset > .tab-content > .tab-pane.fade {
-          transform: translateX(100%);
-        }
-      ")
-    )
+    tags$link(rel = "stylesheet", href = "https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"),
+    tags$script(HTML('
+      $(document).ready(function() {
+        $("#tabs").on("shown.bs.tab", function(event) {
+          var tab = $(event.target).attr("href");
+          $(tab).addClass("animate__animated animate__flip");
+          $(tab).one("animationend", function() {
+            $(tab).removeClass("animate__animated animate__flip");
+          });
+        });
+      });
+    '))
   ),
   fluidRow(
     column(width = 8,
            tabsetPanel(
-             id = "tabs", # added this to turn pages and keep tab of them
+             id = "tabs",
              tabPanel("Title Page",
                       h2(""),
                       p(""),
@@ -71,15 +55,8 @@ server <- function(input, output, session) {
   output$table1 <- renderDataTable({
     data.frame(A = rnorm(10), B = rnorm(10))
   })
-  
-  observe({ # updates tab when page is turned so app knows which part it is on
-    if (!is.null(input$tabs)) {
-      selected_tab <- input$tabs
-      selected_tab <- gsub(".*-", "", selected_tab)
-      updateTabsetPanel(session, "tabs", selected = selected_tab)
-    }
-  })
 }
 
 shinyApp(ui, server)
+
 
