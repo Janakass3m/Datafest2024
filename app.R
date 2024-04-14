@@ -49,20 +49,13 @@ ui <- fluidPage(
         border: 2px solid black; /* Border */
       }
       
-            
-      .white-band {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 60px; /* Adjust the height of the white band */
-        background-color: white;
-        z-index: 1000; /* Ensure the white band is above other content */
-        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Add shadow for subtle separation */
+      .question-box {
+        margin-top: 20px;
       }
+      
+            
     "))
   ),
-  div(class = "white-band"),
   div(class = "container-fluid",
       div(id = "page1", style = "display:block;",
           tags$img(src = "images/image.png", class = "custom-image"),
@@ -93,8 +86,18 @@ ui <- fluidPage(
           div(class = "white-box",
               h2("Sample Questions"),
               p(""),
-              actionButton("next_page3", "Next Page", style = "margin-top: 20px;"),
-              actionButton("back_page1", "Back", style = "margin-top: 20px;")
+              actionButton("next_page3", "Next Page", style = "margin-top: 20px; margin-bottom: 20px;"),
+              actionButton("back_page1", "Back", style = "margin-top: 20px;margin-bottom: 20px;"),
+              p("Match the left items with the corresponding right items:"),
+              div(class = "question-box",
+                  selectInput("left_items_page3", label = "Left Items:",
+                              choices = c("A", "B", "C", "D"),
+                              multiple = TRUE),
+                  selectInput("right_items_page3", label = "Right Items:",
+                              choices = c("1", "2", "3", "4"),
+                              multiple = TRUE)
+              ),
+              actionButton("check_answers_page3", "Check Answers", style = "margin-top: 20px;"),
           )
       ),
       div(id = "page4", style = "display:none;",
@@ -148,4 +151,33 @@ ui <- fluidPage(
   ")
 )
 
+server <- function(input, output) {
+  observeEvent(input$check_answers_page3, {
+    left_selected <- input$left_items_page3
+    right_selected <- input$right_items_page3
+    
+    # Define the correct matching pairs for page 3
+    correct_pairs_page3 <- list(A = "1", B = "2", C = "3", D = "4")
+    
+    # Check if all selections on page 3 are correct
+    if (identical(sort(left_selected), names(correct_pairs_page3)) &&
+        identical(sort(right_selected), unlist(correct_pairs_page3))) {
+      # Display modal dialog for correct answers on page 3
+      showModal(modalDialog(
+        title = "Results",
+        "Correct! All matches on Page 3 are right."
+      ))
+    } else {
+      # Display modal dialog for incorrect answers on page 3
+      showModal(modalDialog(
+        title = "Results",
+        "Incorrect! Some matches on Page 3 are wrong. Please try again."
+      ))
+    }
+  })
+}
+
+
+
 shinyApp(ui, server = function(input, output) {})
+
