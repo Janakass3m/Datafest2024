@@ -1,0 +1,105 @@
+---
+title: "Homework8"
+author: "Madison Rudkin -  SDS 313"
+date: "2023-11-16"
+output: html_document
+---
+
+```{r global_options, echo=FALSE}
+knitr::opts_chunk$set(fig.height=3, fig.width=4, warning=FALSE, tidy=TRUE, tidy.opts=list(width.cutoff=60))
+```
+
+------------------------------------------------------------------------
+
+```{r echo=FALSE, message=FALSE}
+library(ggplot2)
+library(RColorBrewer)
+library(tidyverse)
+library(lubridate)
+library(rvest)
+library(dplyr)
+library(shiny)
+library(DescTools)
+library(robust)
+library(car)
+
+responses <- read.csv("responses.csv")
+eoc_scores <- read.csv("checkpoints_eoc.csv")
+pulse_ratings <- read.csv("checkpoints_pulse.csv")
+items <- read.csv("items.csv")
+media_views <- read.csv("media_views.csv")
+page_views <- read.csv("page_views.csv")
+responses <- read.csv("responses.csv")
+```
+
+# Proportion of Code questions to Learnocity
+```{r echo=FALSE, message=FALSE}
+responses.final <- responses %>%
+  filter(book == "College / Statistics and Data Science (ABC)", chapter_number <= 12, student_id == "fb7c9a8b-7b0c-4907-90c1-3a6e5230b486") %>%
+  group_by(chapter_number) %>%
+  select(item_id, item_type) %>%
+  distinct()%>%
+  mutate(total_questions = n_distinct(item_id),
+         code_count = sum(item_type == "code")) %>%
+  mutate(prop_code = code_count / total_questions) %>%
+  select(chapter_number, total_questions, code_count, prop_code)
+
+resp.final <- unique(responses.final)
+
+resp.final <- resp.final %>%
+  arrange(chapter_number)
+```
+
+# Average EOC score by chapter
+```{r echo=FALSE}
+eoc_average <- eoc_scores %>%
+  filter(book == "College / Statistics and Data Science (ABC)", chapter_number <= 12) %>%
+  group_by(chapter_number) %>%
+  summarize(avg_EOC_score = mean(EOC, na.rm = TRUE))
+  
+resp.final <- left_join(resp.final, eoc_average, by = "chapter_number")
+```
+
+# Average Pulse score by Chapter
+```{r echo=FALSE}
+pulse_average <- pulse_ratings %>%
+  filter(book == "College / Statistics and Data Science (ABC)", chapter_number <= 12) %>%
+  group_by(chapter_number) %>%
+  summarize(avg_pulse_score = mean(response, na.rm = TRUE))
+
+resp.final <- left_join(resp.final, pulse_average, by = "chapter_number")
+```
+
+# ANOVA for EOC scores by Chapter, is statistically significant
+```{r echo=FALSE}
+eoc_scores_no_na <- eoc_scores %>%
+  filter(book == "College / Statistics and Data Science (ABC)", chapter_number <= 12)
+eoc_scores_no_na <- eoc_scores_no_na %>%
+  filter(!is.na(EOC) & !is.na(chapter_number))
+
+leveneTest(EOC ~ factor(chapter_number), data = eoc_scores_no_na)
+
+robust_model <- lmRob(EOC ~ factor(chapter_number), data = eoc_scores_no_na)
+
+robust_anova <- anova(robust_model)
+print(robust_anova)
+```
+
+```{r echo=FALSE, message=FALSE}
+avg_eoc_out = 0.7827640
+prop_out = 0.6315789
+
+resp.final_filt <- resp.final %>% 
+  filter(prop_code < prop_out & avg_EOC_score < avg_eoc_out)
+
+ggplot(resp.final_filt, aes(x = prop_code, y = avg_EOC_score)) +
+  geom_point() +                                   
+  geom_smooth(method = "lm", se = FALSE) +         
+  labs(title = "Average EOC Score vs. Proportion of Code Questions",
+       x = "Proportion of Code Questions",
+       y = "Average EOC Score") +
+  theme_minimal()                                  
+
+cor(resp.final_filt$prop_code, resp.final_filt$avg_EOC_score, use = "complete.obs")
+```
+
